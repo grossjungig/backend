@@ -8,10 +8,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SPECTR3R/grossjungig-backend.git"
-  },
+  
   "author": "Akua Appiah-Lindberg",
   "license": "ISC",
   "dependencies": {
