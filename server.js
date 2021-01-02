@@ -31,6 +31,7 @@ app.use(
       "https://grossjungig.vercel.app",
       "https://grossjungig-frontend.vercel.app",
       "https://grossjungig-de.vercel.app/",
+      "https://frontend-iwxkb9y4y.vercel.app/",
       "https://grossjungig.de", // adding the grossjungig.de to ensure CORS doesn't restrict it
     ],
     credentials: true,
