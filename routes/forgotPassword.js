@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Token = require("../models/Token");
 
 router.post("/forgotPassword", (req, res) => {
   console.log(req);
@@ -12,15 +13,17 @@ router.post("/forgotPassword", (req, res) => {
   console.error(req.body.email);
   User.findOne({
     email: req.body.email,
-  }).then((user) => {
+  }).then(async (user) => {
     if (user === null) {
       console.error("email not in database");
       res.status(403).send("email not in db");
     } else {
-      const token = crypto.randomBytes(20).toString("hex");
-      user.update({
-        resetPasswordToken: token,
-        resetPasswordExpires: Date.now() + 3600000,
+      const hash = crypto.randomBytes(20).toString("hex");
+
+      await Token.create({
+        hash,
+        user_id: user.id,
+        expiresAt: Date.now() + 3600000,
       });
 
       const transporter = nodemailer.createTransport({
@@ -38,7 +41,7 @@ router.post("/forgotPassword", (req, res) => {
         text:
           "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
           "Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n" +
-          `http://localhost:3000/reset/${token}\n\n` +
+          `http://localhost:3000/reset/${hash}\n\n` +
           "If you did not request this, please ignore this email and your password will remain unchanged.\n",
       };
 

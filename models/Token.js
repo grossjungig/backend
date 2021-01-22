@@ -2,16 +2,17 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const tokenSchema = new Schema({
-  token: { type: String, required: true },
-  owner: {
+  hash: { type: String, required: true },
+  user_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  timestamps: {
+  createdAt: {
     type: Date,
     default: Date.now,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+  },
+  expiresAt: {
+    type: Date,
   },
 });
 
