@@ -28,7 +28,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://grossjungig-de.vercel.app/",
+      "https://grossjungig-de.vercel.app",
       "https://grossjungig.de", // adding the grossjungig.de to ensure CORS doesn't restrict it
     ],
     credentials: true,
