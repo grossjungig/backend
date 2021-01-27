@@ -6,21 +6,22 @@ const User = require("../models/User");
 passport.use(
   new LocalStrategy(
     { usernameField: "email", passwordField: "password" },
-    (email, password, cb) => {
+    (email, password, done) => {
+      console.log("email, password");
       User.findOne({ email: email })
-        .then(foundUser => {
+        .then((foundUser) => {
           if (!foundUser) {
-            return cb(null, false, { message: "Incorrect username." });
+            return done(null, false, { message: "Incorrect username." });
           }
-          return bcrypt.compare(password, foundUser.password).then(match => {
+          return bcrypt.compare(password, foundUser.password).then((match) => {
             if (!match) {
-              return cb(null, false, { message: "Incorrect password." });
+              return done(null, false, { message: "Incorrect password." });
             }
-            cb(null, foundUser);
+            done(null, foundUser);
           });
         })
-        .catch(err => {
-          cb(err);
+        .catch((err) => {
+          done(err);
         });
     }
   )
