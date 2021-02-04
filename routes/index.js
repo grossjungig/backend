@@ -6,6 +6,7 @@ const forgotPasswordRoutes = require("./forgotPassword");
 
 // const commentsRoutes = require("./comments");
 const roomsRoutes = require("./rooms");
+const profilesRoutes = require("./profiles");
 
 // router.get("/", (req, res) => {
 //   res.send("This is home");
@@ -16,6 +17,8 @@ const roomsRoutes = require("./rooms");
 router.use("/api/auth", usersRoutes);
 router.use("/api", roomsRoutes);
 router.use("/api/auth", forgotPasswordRoutes);
+router.use("/api", profilesRoutes);
+
 // router.use("/api", commentsRoutes);
 
 module.exports = router;

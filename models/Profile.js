@@ -14,10 +14,10 @@ const profileSchema = new Schema({
   postcode: Number,
   price: String,
   phoneNumber: Number,
-  neighbourhood: String,
+  help: String,
   images: [{ secureUrl: String }],
-  owner: {
-    type: Schema.Types.ObjectId,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
 });

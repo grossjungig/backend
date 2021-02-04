@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Profile = require("../models/Profile");
+const User = require("../models/User");
 /* Here we'll write the routes for the Profiles */
 
-//1. to retrieve Profiles from mongo and make available to frontend
 router.get("/profiles", (req, res, next) => {
   console.log("Profiles", req.body);
   Profile.find({}).then((result) => {
@@ -12,13 +12,18 @@ router.get("/profiles", (req, res, next) => {
 });
 
 router.get("/profiles/:id", (req, res) => {
-  Profile.findById(req.params.id).then((profile) => {
-    res.json(profile);
-    console.log("This is the Profile", Profile);
-  });
+  console.log("ana fl profile");
+  Profile.findById(req.params.id)
+    .populate("user")
+    .then((profile) => {
+      console.log("profile in /profile", profile);
+      res.json(profile);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 
-//post new Profile in Berlin
 router.post("/addProfile", (req, res) => {
   //2.get the data from frontend
   const {
@@ -30,19 +35,11 @@ router.post("/addProfile", (req, res) => {
     postcode,
     price,
     phoneNumber,
-    owner,
+    user,
+    help,
   } = req.body;
-  console.log("BACKEND", req.body);
-  //3. then create a new Profile with information from the frontend
   req.user;
   Profile.create({
-    gender,
-    description,
-    district,
-    postcode,
-    price,
-    phoneNumber,
-    owner,
     name: name,
     age: age,
     gender: gender,
@@ -51,19 +48,26 @@ router.post("/addProfile", (req, res) => {
     postcode: postcode,
     phoneNumber: phoneNumber,
     price: price,
-    owner: owner,
-  })
-    .then((newProfile) => {
-      console.log("whats name?");
-      console.log("NEWProfile", newProfile);
-      res.json(newProfile);
-    })
-    .catch((err) => {
-      res.status(500).json({
-        messgae: "Error",
+    user: user,
+    help: help,
+  }).then((newProfile) => {
+    User.findOneAndUpdate(
+      { _id: req.body.user },
+      { $set: { profile: newProfile } },
+      (err, result) => {
+        if (err) return res.send(err);
+        console.log("result", result);
+      }
+    )
+      .then((result) => {
+        res.json(newProfile);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    });
+  });
 });
+
 router.patch("/updateProfile/:profileId", (req, res) => {
   const { profileId } = req.params;
   console.log(ProfileId);

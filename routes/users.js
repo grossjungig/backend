@@ -59,7 +59,7 @@ router.post("/login", (req, res, next) => {
     }
     // passport req.login
     req.login(user, (err) => {
-      console.log("USER???????", user);
+      console.log("USER in /login", user);
 
       if (err) {
         return res.status(500).json({ message: "Error while logging in" });
