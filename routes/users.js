@@ -31,10 +31,8 @@ router.post("/signup", async (req, res) => {
       // sendign response
       req.login(newUser, (err) => {
         if (err) {
-          console.log("error login", err);
           res.status(500).json({ message: "Error while logging in" });
         } else {
-          console.log("sending back the user");
           res.json({
             id: newUser.id,
           });
@@ -48,7 +46,6 @@ router.post("/signup", async (req, res) => {
 
 //3)
 router.post("/login", (req, res, next) => {
-  console.log("backenduser", req.body);
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return res.status(500).json({ message: "Error while logging in" });
@@ -59,8 +56,6 @@ router.post("/login", (req, res, next) => {
     }
     // passport req.login
     req.login(user, (err) => {
-      console.log("USER???????", user);
-
       if (err) {
         return res.status(500).json({ message: "Error while logging in" });
       }
@@ -77,13 +72,7 @@ router.delete("/logout", (req, res) => {
 });
 
 router.get("/loggedin", (req, res) => {
-  console.log("USER LOGGED IN", req.user);
-  // if (req.user) {
   res.json(req.user);
-  // }
-  // else {
-  //   res.json(null);
-  // }
 });
 
 module.exports = router;
