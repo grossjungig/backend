@@ -5,7 +5,6 @@ const Room = require("../models/Room");
 
 //1. to retrieve rooms from mongo and make available to frontend
 router.get("/rooms", (req, res, next) => {
-  console.log("Rooms", req.body);
   Room.find({}).then((result) => {
     res.send({ rooms: result });
   });
@@ -14,7 +13,6 @@ router.get("/rooms", (req, res, next) => {
 router.get("/rooms/:id", (req, res) => {
   Room.findById(req.params.id).then((room) => {
     res.json(room);
-    console.log("This is the room", room);
   });
 });
 
@@ -33,7 +31,6 @@ router.post("/addRoom", (req, res) => {
     neighbourhood,
     owner,
   } = req.body;
-  console.log("BACKEND", req.body);
   //3. then create a new room with information from the frontend
   req.user;
   Room.create({
@@ -61,8 +58,6 @@ router.post("/addRoom", (req, res) => {
 });
 router.patch("/updateroom/:roomId", (req, res) => {
   const { roomId } = req.params;
-  console.log(roomId);
-  console.log(req.body);
   const { secureUrl } = req.body;
   Room.findByIdAndUpdate(
     roomId,
@@ -75,10 +70,9 @@ router.patch("/updateroom/:roomId", (req, res) => {
 });
 //delete room from list
 router.delete("/rooms/:id/delete", (req, res) => {
-  //console.log('whats req?', req.params.id);
+  s;
   Room.deleteOne({ _id: req.params.id })
     .then((result) => {
-      //console.log('RESULT', result);
       res.json(result);
     })
     .catch((err) => {

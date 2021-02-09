@@ -5,18 +5,15 @@ const User = require("../models/User");
 /* Here we'll write the routes for the Profiles */
 
 router.get("/profiles", (req, res, next) => {
-  console.log("Profiles", req.body);
   Profile.find({}).then((result) => {
     res.send({ profiles: result });
   });
 });
 
 router.get("/profiles/:id", (req, res) => {
-  console.log("ana fl profile");
   Profile.findById(req.params.id)
     .populate("user")
     .then((profile) => {
-      console.log("profile in /profile", profile);
       res.json(profile);
     })
     .catch((error) => {
@@ -70,8 +67,6 @@ router.post("/addProfile", (req, res) => {
 
 router.patch("/updateProfile/:profileId", (req, res) => {
   const { profileId } = req.params;
-  console.log(ProfileId);
-  console.log(req.body);
   const { secureUrl } = req.body;
   Profile.findByIdAndUpdate(
     ProfileId,
@@ -84,10 +79,8 @@ router.patch("/updateProfile/:profileId", (req, res) => {
 });
 //delete Profile from list
 router.delete("/profiles/:id/delete", (req, res) => {
-  //console.log('whats req?', req.params.id);
   Profile.deleteOne({ _id: req.params.id })
     .then((result) => {
-      //console.log('RESULT', result);
       res.json(result);
     })
     .catch((err) => {
