@@ -14,6 +14,7 @@ router.get("/profiles/:id", (req, res) => {
   Profile.findById(req.params.id)
     .populate("user")
     .then((profile) => {
+      console.log("profile", profile);
       res.json(profile);
     })
     .catch((error) => {
@@ -57,6 +58,8 @@ router.post("/addProfile", (req, res) => {
       }
     )
       .then((result) => {
+        console.log("result", result);
+        console.log("new Profile", newProfile);
         res.json(newProfile);
       })
       .catch((err) => {
@@ -65,17 +68,30 @@ router.post("/addProfile", (req, res) => {
   });
 });
 
-router.patch("/updateProfile/:profileId", (req, res) => {
-  const { profileId } = req.params;
-  const { secureUrl } = req.body;
-  Profile.findByIdAndUpdate(
-    ProfileId,
-    { $push: { images: { secureUrl } } },
-    { safe: true, upsert: true, new: true },
-    function (err, model) {
-      console.log(err);
-    }
-  );
+//updating profile
+router.post("/edit/:id", (req, res) => {
+  Profile.findById(req.params.id, function (err, profile) {
+    if (!profile) res.status(404).send("data is not found");
+    else profile.user.name = req.body.name;
+    profile.age = req.body.age;
+    profile.gender = req.body.gender;
+    profile.district = req.body.district;
+    profile.description = req.body.description;
+    profile.price = req.body.price;
+    profile.postcode = req.body.postcode;
+    profile.address = req.body.address;
+    profile.phoneNumber = req.body.phoneNumber;
+    profile.user.email = req.body.email;
+    profile.help = req.body.help;
+    profile
+      .save()
+      .then((prof) => {
+        res.json("Profile updated!");
+      })
+      .catch((err) => {
+        console.log("error", err);
+      });
+  });
 });
 //delete Profile from list
 router.delete("/profiles/:id/delete", (req, res) => {
