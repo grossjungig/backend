@@ -14,7 +14,7 @@ const profileSchema = new Schema({
   postcode: Number,
   price: String,
   phoneNumber: Number,
-  help: String,
+  help: [String],
   images: [{ secureUrl: String }],
   user: {
     type: mongoose.Schema.Types.ObjectId,
