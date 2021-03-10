@@ -1,73 +1,46 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const passport = require("passport");
 const User = require("../models/User");
-/* Here we'll write the routes dedicated to handle the user logic (auth) */
-//2.
+const jwt = require('jsonwebtoken');
 
-router.post("/signup", async (req, res) => {
+const TOKEN_PRIVATE_KEY = 'ajkfklajöfk9u8r9w0';
+
+router.post("/signup", async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
-  const isFound = await User.findOne({ email: email });
+  const userAlreadyExists = await User.findOne({ email: email });
 
-  if (isFound) {
-    return res.status(400).json({ message: "This email already exists" });
-  } else {
-    // single responsability principle
+  if (userAlreadyExists) {
+    res.status(400).json({ message: "This email already exists" });
+    return;
+  }
 
-    try {
-      const hash = await bcrypt.genSalt().then((salt) => {
-        return bcrypt.hash(password, salt);
-      });
+  try {
+    const hashedPwd = await bcrypt.hash(password, 12)
+    const newUser = await User.create({
+      name: name,
+      role: role,
+      email: email,
+      password: hashedPwd,
+    });
+    res.status(201).json({ message: 'User created', userId: newUser._id });
 
-      const newUser = await User.create({
-        name: name,
-        role: role,
-        email: email,
-        password: hash,
-      });
-
-      // sendign response
-      req.login(newUser, (err) => {
-        if (err) {
-          res.status(500).json({ message: "Error while logging in" });
-        } else {
-          res.json({
-            id: newUser.id,
-          });
-        }
-      });
-    } catch (e) {
-      console.log(error);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
     }
+    next(err);
   }
 });
 
-//3)
 router.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return res.status(500).json({ message: "Error while logging in" });
-    }
-    if (!user) {
-      // no user found with username or password didn't match
-      return res.status(400).json({ message: info.message });
-    }
-    // passport req.login
-    req.login(user, (err) => {
-      if (err) {
-        return res.status(500).json({ message: "Error while logging in" });
-      }
-      req.user = user; //setting user to be the requested user
-      res.json(user);
-    });
-  })(req, res, next);
+
 });
 
+// todo: MAKE IT A POST REQ NOT DELETE!!!
 router.delete("/logout", (req, res) => {
-  // passport logout function
-  req.logout();
+  // LOGOUT!!! 
   res.json({ message: "Successful logout" });
 });
 
