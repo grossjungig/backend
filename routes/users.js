@@ -3,8 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const jwt = require('jsonwebtoken');
-
-const TOKEN_PRIVATE_KEY = 'ajkfklajöfk9u8r9w0';
+const { TOKEN_PRIVATE_KEY } = process.env;
 
 router.post("/signup", async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -34,8 +33,28 @@ router.post("/signup", async (req, res, next) => {
   }
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", async (req, res, next) => {
+  const { email, password } = req.body;
+  
+  try {
+    const user = await User.findOne({ email: email });
+    const correctPwd = await bcrypt.compare(password, user.password)
+    if (!user || !correctPwd) {
+      const error = new Error('Username or password are wrong.');
+      error.statusCode = 401;
+      throw error
+    }
 
+    const token = jwt.sign(
+      { email: user.email, userId: user._id.toString() },
+      TOKEN_PRIVATE_KEY,
+      { expiresIn: '1h' }
+    );
+    res.status(200).json({ token: token, userId: user._id.toString() });
+  } catch (err) {
+    if(!err.statusCode) err.statusCode = 500;
+    next(err);
+  }
 });
 
 // todo: MAKE IT A POST REQ NOT DELETE!!!
