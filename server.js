@@ -25,6 +25,14 @@ app.use(
 
 app.use(routes);
 
+// Handle Thrown Errors:
+app.use((error, req, res, next) => {
+  const status = error.statusCode || 500;
+  const message = error.message;
+  const data = error.data;
+  res.status(status).json({ message: message, data: data });
+});
+
 const PORT = process.env.PORT || 5555;
 
 app.listen(process.env.PORT, () => {
