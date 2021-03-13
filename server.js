@@ -9,11 +9,8 @@ const routes = require("./routes");
 const app = express();
 
 app.use(fileUpload());
-
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.json());
-
 
 app.use(
   cors({
